@@ -10,9 +10,9 @@ const {
     ActionRowBuilder,
     GuildMember
 } = require("discord.js");
-const { getEnv } = require("../../util.js");
+const { getEnv } = require("../../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("cert")

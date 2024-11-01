@@ -3,6 +3,7 @@
 "use strict";
 
 const { readdir } = require("node:fs/promises");
+const fs = require("node:fs");
 const path = require("node:path");
 const { Collection } = require("discord.js");
 
@@ -20,15 +21,27 @@ exports.slashCommands = slashCommands;
 const messageCommands = new Collection();
 exports.messageCommands = messageCommands;
 
+async function getAllFiles(dirPath) {
+    const files = await readdir(dirPath);
+    const filePaths = [];
+    for (const file of files) {
+        const filePath = path.join(dirPath, file);
+        const stats = await fs.statSync(filePath);
+        if (stats.isDirectory()) {
+            filePaths.push(...(await getAllFiles(filePath)));
+        } else if (stats.isFile() && file.endsWith(".js")) {
+            filePaths.push(filePath);
+        }
+    }
+    return filePaths;
+}
+
 /**
  * @type {import("./type.js").reloadAnyTypeCommandsFunctionType}
  */
 async function reloadAnyTypeCommands(commandDirPaths, commandsCollection) {
     commandsCollection.clear();
-    const filenames = await readdir(commandDirPaths);
-    const commandFilePaths = filenames
-        .filter(fname => fname.endsWith(".js"))
-        .map(fname => path.join(commandDirPaths, fname));
+    const commandFilePaths = await getAllFiles(commandDirPaths);
     for (const filePath of commandFilePaths) {
         console.log("Load module:", filePath);
         const command = require(filePath);

@@ -3,20 +3,17 @@
 "use strict";
 
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
-const { GuildMusicQueue } = require("../../structures/GuildMusicQueue.js");
-const { getEnv } = require("../../util.js");
+const { GuildMusicQueue } = require("../../../structures/GuildMusicQueue.js");
+const { getEnv } = require("../../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("skip")
         .setDescription("曲を複数スキップします")
         .setDMPermission(false)
         .addNumberOption(option =>
-            option
-                .setName("number")
-                .setDescription("スキップする曲数を入力してください。")
-                .setRequired(true)
+            option.setName("number").setDescription("スキップする曲数を入力してください。").setRequired(true)
         )
         .toJSON(),
     handler: async interaction => {

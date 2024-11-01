@@ -3,18 +3,21 @@
 "use strict";
 
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
-const { GuildMusicQueue } = require("../../structures/GuildMusicQueue.js");
-const { getEnv } = require("../../util.js");
+const { GuildMusicQueue } = require("../../../structures/GuildMusicQueue.js");
+const { getEnv } = require("../../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("unshuffle")
-        .setDescription("シャッフルされたキューを元に戻します。")
+        .setName("loop")
+        .setDescription("曲をループします。")
         .setDMPermission(false)
+        .addSubcommand(subcommand =>
+            subcommand.setName("queue").setDescription("プレイリストのすべての曲をループします。")
+        )
         .toJSON(),
     handler: async interaction => {
-        if (!interaction.inCachedGuild()) return;
+        if (!interaction.inCachedGuild() || !interaction.isChatInputCommand()) return;
 
         const channel = interaction.member.voice.channel;
         if (!channel) {
@@ -41,7 +44,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setTitle(getEnv("ERROR"))
                 .setDescription(
-                    `\`\`\`プレイリストはそのチャンネルに属していません。\n<#${queue.voiceChannelId}>に参加してください。\`\`\``
+                    `\`\`\`プレイリストはそのチャンネルに属していません。<#${queue.voiceChannelId}>に参加してください。\`\`\``
                 )
                 .setColor("#ff0000")
                 .setTimestamp();
@@ -49,7 +52,9 @@ module.exports = {
             return;
         }
 
-        queue.unshuffle();
+        if (interaction.options.getSubcommand() === "queue") {
+            queue.toggleLoop();
+        }
         await interaction.reply(getEnv("SUCCESS"));
     }
 };

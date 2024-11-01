@@ -3,10 +3,10 @@
 "use strict";
 
 const { EmbedBuilder } = require("discord.js");
-const { getEnv } = require("../../util.js");
-const { reloadCommands } = require("../../commands-manager.js");
+const { getEnv } = require("../../../util.js");
+const { reloadCommands } = require("../../../commands-manager.js");
 
-/** @type {import("../../type").MessageCommand} */
+/** @type {import("../../../type.js").MessageCommand} */
 module.exports = {
     data: {
         name: "reload"

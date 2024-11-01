@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require("discord.js");
 const fs = require("node:fs");
 const data = fs.readFileSync("/home/alstromeria/Project/splatoon/weapon.txt", "utf-8");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("random")

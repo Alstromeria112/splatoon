@@ -3,10 +3,10 @@
 "use strict";
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { getEnv } = require("../../util.js");
-const { reloadCommands } = require("../../commands-manager.js");
+const { getEnv } = require("../../../util.js");
+const { reloadCommands } = require("../../../commands-manager.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder().setName("reload").setDescription("Reload bot.").toJSON(),
     handler: async interaction => {

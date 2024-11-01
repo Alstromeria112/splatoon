@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { default: axios } = require("axios");
-const { getEnv } = require("../../util");
+const { getEnv } = require("../../../util");
 
 const modes = {
     1: "regular",
@@ -30,7 +30,7 @@ const nn = {
     next: "次"
 };
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("schedule")

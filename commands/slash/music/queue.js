@@ -3,10 +3,10 @@
 "use strict";
 
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
-const { GuildMusicQueue } = require("../../structures/GuildMusicQueue.js");
-const { getEnv } = require("../../util.js");
+const { GuildMusicQueue } = require("../../../structures/GuildMusicQueue.js");
+const { getEnv } = require("../../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("queue")
@@ -15,9 +15,7 @@ module.exports = {
             subcommand
                 .setName("list")
                 .setDescription("現在入っているキューの一覧を取得します。")
-                .addIntegerOption(option =>
-                    option.setName("page").setDescription("page number.").setRequired(false)
-                )
+                .addIntegerOption(option => option.setName("page").setDescription("page number.").setRequired(false))
         )
         .setDMPermission(false)
         .toJSON(),
@@ -59,9 +57,7 @@ module.exports = {
             }
 
             let queueSongs = queue.getQueue();
-            let queueString = queueSongs
-                .map((song, index) => `${index + 1}. ${song.title}`)
-                .join(",\n");
+            let queueString = queueSongs.map((song, index) => `${index + 1}. ${song.title}`).join(",\n");
             const embed = new EmbedBuilder()
                 .setTitle(`プレイリスト`)
                 .setDescription(`\`\`\`${queueString}\`\`\``)

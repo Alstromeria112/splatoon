@@ -3,14 +3,14 @@
 "use strict";
 
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
-const { GuildMusicQueue } = require("../../structures/GuildMusicQueue.js");
-const { getEnv } = require("../../util.js");
+const { GuildMusicQueue } = require("../../../structures/GuildMusicQueue.js");
+const { getEnv } = require("../../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("shuffle")
-        .setDescription("現在キューに入っている曲をシャッフルします。")
+        .setName("unpause")
+        .setDescription("曲の停止を解除します。")
         .setDMPermission(false)
         .toJSON(),
     handler: async interaction => {
@@ -49,7 +49,7 @@ module.exports = {
             return;
         }
 
-        queue.shuffle();
+        queue.unpause();
         await interaction.reply(getEnv("SUCCESS"));
     }
 };
