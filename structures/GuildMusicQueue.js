@@ -12,7 +12,7 @@ const {
     getVoiceConnections: getAllVoiceConnections
 } = require("@discordjs/voice");
 const ytdl = require("@distube/ytdl-core");
-const ytsr = require("ytsr");
+const ytsr = require("@distube/ytsr");
 const { moduleDispose } = require("../commands-manager.js");
 
 const privateSymbol = Symbol();
@@ -108,11 +108,11 @@ class ParsedMusicInfo {
         }
         async function requestYtsr(query) {
             const ytsrResult = await ytsr(query);
-            const video = /** @type {import("ytsr").Video} */ (ytsrResult.items.find(res => res.type === "video"));
+            const video = /** @type {ytsr.Video} */ (ytsrResult.items.find(res => res.type === "video"));
             return {
                 url: video.url,
-                name: video.title,
-                thumbnail: video.bestThumbnail.url ?? void 0,
+                name: video.name,
+                thumbnail: video.thumbnail ?? void 0,
                 authorUrl: video.author?.url ?? void 0,
                 authorName: video.author?.name ?? void 0,
                 authorIcon: video.author?.bestAvatar?.url ?? void 0
@@ -308,6 +308,7 @@ class GuildMusicQueue {
      */
     static getOrCreate(voiceChannel) {
         const connection = joinVoiceChannel({
+            // @ts-ignore
             adapterCreator: voiceChannel.guild.voiceAdapterCreator,
             channelId: voiceChannel.id,
             guildId: voiceChannel.guildId,
