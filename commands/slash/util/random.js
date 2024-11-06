@@ -1,7 +1,8 @@
 // @ts-check
 
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fs = require("node:fs");
+const { getEnv } = require("../../../util.js");
 const data = fs.readFileSync("/home/alstromeria/Project/splatoon/weapon.txt", "utf-8");
 
 /** @type {import("../../../type").SlashCommand} */
@@ -30,13 +31,19 @@ module.exports = {
             const members = voiceChannel.members.filter(m => !m.user.bot);
 
             try {
-                let response = "Result: \n";
+                let response = "";
                 for (const [memberId, member] of members) {
                     const random = getRandom();
                     response += `<@${member.id}>: ${random}\n`;
                 }
 
-                await interaction.reply(response);
+                const embed = new EmbedBuilder()
+                    .setAuthor({ name: "Result", iconURL: interaction.user.displayAvatarURL() })
+                    .setDescription(response)
+                    .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
+                    .setColor("#00ffff");
+
+                await interaction.reply({ embeds: [embed] });
             } catch (e) {
                 console.error(e);
                 return interaction.reply("Error. Please contact as administrator.");
