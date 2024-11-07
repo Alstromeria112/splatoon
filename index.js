@@ -5,95 +5,40 @@ Error.stackTraceLimit = Infinity;
 
 const { Client, EmbedBuilder, GatewayIntentBits: IntentBits, ChannelType } = require("discord.js");
 const { slashCommands, messageCommands, reloadCommands } = require("./commands-manager.js");
-const { getEnv } = require("./util.js");
+const { getEnv, sendEmbed } = require("./util.js");
 require("dotenv/config.js");
-
-const guildId = getEnv("GUILD_ID");
-const channelId = getEnv("CHANNEL_ID");
 
 const client = new Client({
     intents: [IntentBits.Guilds, IntentBits.GuildMessages, IntentBits.MessageContent, IntentBits.GuildVoiceStates]
 });
 
 client.on("interactionCreate", async interaction => {
-    if (!interaction.inCachedGuild()) return;
-    let interactionType;
-    let commandType;
-    if (interaction.isChatInputCommand()) {
-        commandType = interaction;
-        interactionType = "Chat Input Command";
-    } else if (interaction.isButton()) {
-        commandType = interaction.customId;
-        interactionType = "Button";
-    } else {
-        return;
-    }
-    const commandName = interaction.isChatInputCommand()
-        ? interaction.commandName
-        : interaction.customId.slice(0, interaction.customId.indexOf("/"));
-    const command = slashCommands.get(commandName);
-    if (!command) {
-        const errEmbed = new EmbedBuilder()
-            .setTitle(getEnv("ERROR"))
-            .setDescription(`\`\`\`Unknown interaction: ${commandName}\`\`\``)
-            .setColor("#ff0000")
-            .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
-            .setTimestamp();
-        interaction.reply({ embeds: [errEmbed] });
-        return;
-    }
-    try {
-        await command.handler(interaction);
-        const lguild = await interaction.client.guilds.fetch(guildId);
-        const lchannel = await lguild.channels.fetch(channelId);
-        if (!lguild || !lchannel) return;
-        if (lchannel.type === ChannelType.GuildText) {
-            const embed = new EmbedBuilder()
-                .setTitle("Add Request")
-                .setAuthor({
-                    name: interaction.user.tag + ` (${interaction.user.id})`,
-                    iconURL: interaction.user.displayAvatarURL()
-                })
-                .addFields(
-                    {
-                        name: "Guild",
-                        value: `\`\`\`${interaction.guild.name}\n${interaction.guild.id}\`\`\``,
-                        inline: true
-                    },
-                    { name: "Type", value: `\`\`\`${interactionType}\`\`\``, inline: false },
-                    { name: "Command", value: `\`\`\`${interaction}\`\`\``, inline: false }
-                )
-                .setColor("#00ff00")
-                .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
-                .setTimestamp();
-            await lchannel.send({ embeds: [embed] });
-        }
-    } catch (e) {
-        console.log(e);
-        const lguild = await interaction.client.guilds.fetch(guildId);
-        const lchannel = await lguild.channels.fetch(channelId);
-        if (!lguild || !lchannel) return;
-        if (lchannel.type === ChannelType.GuildText) {
-            const embed = new EmbedBuilder()
-                .setTitle("Bad Request")
-                .setAuthor({
-                    name: interaction.user.tag + ` (${interaction.user.id})`,
-                    iconURL: interaction.user.displayAvatarURL()
-                })
-                .setDescription(`\`\`\`${e}\`\`\``)
-                .addFields(
-                    {
-                        name: "Guild",
-                        value: `\`\`\`${interaction.guild.name}\n${interaction.guild.id}\`\`\``,
-                        inline: true
-                    },
-                    { name: "Type", value: `\`\`\`${interactionType}\`\`\``, inline: false },
-                    { name: "Command", value: `\`\`\`${commandType}\`\`\``, inline: false }
-                )
+    if (interaction.isChatInputCommand() || interaction.isButton()) {
+        const commandName = interaction.isChatInputCommand()
+            ? interaction.commandName
+            : interaction.customId.slice(0, interaction.customId.indexOf("/"));
+        const command = slashCommands.get(commandName);
+        if (!command) {
+            const errEmbed = new EmbedBuilder()
+                .setTitle(getEnv("ERROR"))
+                .setDescription(`\`\`\`Unknown interaction: ${commandName}\`\`\``)
                 .setColor("#ff0000")
                 .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
                 .setTimestamp();
-            await lchannel.send({ embeds: [embed] });
+            interaction.reply({ embeds: [errEmbed] });
+            return;
+        }
+        try {
+            await command.handler(interaction);
+            return sendEmbed(interaction, true, null);
+        } catch (e) {
+            const embed = new EmbedBuilder()
+                .setTitle(getEnv("ERROR"))
+                .setDescription(`\`\`\`${e}\`\`\``)
+                .setColor("#ff0000")
+                .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") });
+            interaction.reply({ embeds: [embed] });
+            return sendEmbed(interaction, false, e);
         }
     }
 });
