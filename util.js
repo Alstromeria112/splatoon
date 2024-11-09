@@ -19,13 +19,21 @@ function getEnv(name) {
 exports.getEnv = getEnv;
 
 /**
+ * @param {String} text
+ */
+function log(text) {
+    console.log(`[${getDateString(new Date())}]`, text);
+}
+exports.log = log;
+
+/**
  * @param {Date | undefined} date
  * @returns {string}
  */
 function getDateString(date = new Date()) {
     return (
-        `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ` +
-        `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getDate().toString().padStart(2, "0")} ` +
+        `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`
     );
 }
 exports.getDateString = getDateString;

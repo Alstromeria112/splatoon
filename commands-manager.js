@@ -6,6 +6,7 @@ const { readdir } = require("node:fs/promises");
 const fs = require("node:fs");
 const path = require("node:path");
 const { Collection } = require("discord.js");
+const { log } = require("./util.js");
 
 const slashCommandsPath = path.join(__dirname, "commands/slash");
 const messageCommandsPath = path.join(__dirname, "commands/message");
@@ -43,7 +44,7 @@ async function reloadAnyTypeCommands(commandDirPaths, commandsCollection) {
     commandsCollection.clear();
     const commandFilePaths = await getAllFiles(commandDirPaths);
     for (const filePath of commandFilePaths) {
-        console.log("Load module:", filePath);
+        log("Load module: " + filePath);
         const command = require(filePath);
         commandsCollection.set(command.data.name, command);
     }
@@ -59,13 +60,13 @@ async function reloadCommands() {
         const mod = /** @type {NodeModule} */ (require.cache[name]);
         const moduleDisposeCallback = mod.exports[moduleDispose];
         if (typeof moduleDisposeCallback === "function") moduleDisposeCallback();
-        console.log(`[ DELETE CACHE ] ${name}`);
+        log(`[ DELETE CACHE ] ${name}`);
         delete require.cache[name];
     }
     await Promise.all([
         reloadAnyTypeCommands(slashCommandsPath, slashCommands),
         reloadAnyTypeCommands(messageCommandsPath, messageCommands)
     ]);
-    console.log("Successfully");
+    log("Successfully");
 }
 exports.reloadCommands = reloadCommands;

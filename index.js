@@ -5,7 +5,7 @@ Error.stackTraceLimit = Infinity;
 
 const { Client, EmbedBuilder, GatewayIntentBits: IntentBits, ChannelType } = require("discord.js");
 const { slashCommands, messageCommands, reloadCommands } = require("./commands-manager.js");
-const { getEnv, sendEmbed } = require("./util.js");
+const { getEnv, sendEmbed, log } = require("./util.js");
 require("dotenv/config.js");
 
 const client = new Client({
@@ -67,9 +67,9 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 });
 
 client.on("ready", client => {
-    console.log(`[ CONSOLE ] <Slash> ${slashCommands.map(command => command.data.name).join(", ")} is loaded`);
-    console.log(`[ CONSOLE ] <Text> ${messageCommands.map(command => command.data.name).join(", ")} is loaded`);
-    console.log(`[ CONSOLE ] Logged in as ${client.user.tag}`);
+    log(`[ CONSOLE ] <Slash> ${slashCommands.map(command => command.data.name).join(", ")} is loaded`);
+    log(`[ CONSOLE ] <Text> ${messageCommands.map(command => command.data.name).join(", ")} is loaded`);
+    log(`[ CONSOLE ] Logged in as ${client.user.tag}`);
 });
 
 ~(async function () {

@@ -1,6 +1,6 @@
 // @ts-check
 
-const { getEnv } = require("../util");
+const { getEnv, log } = require("../util");
 const { Client, ChannelType, Colors, EmbedBuilder } = require("discord.js");
 
 /**
@@ -8,7 +8,7 @@ const { Client, ChannelType, Colors, EmbedBuilder } = require("discord.js");
  */
 module.exports = client => {
     client.once("ready", () => {
-        console.log("[ STRUCTURE ] join is loaded");
+        log("[ STRUCTURE ] join is loaded");
     });
 
     client.on("guildMemberAdd", async member => {
