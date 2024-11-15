@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { default: axios } = require("axios");
-const { getEnv } = require("../../../util");
+const { getEnv, log } = require("../../../util");
 
 const modes = {
     1: "regular",
@@ -134,7 +134,7 @@ async function getBattleSchedule(type, mode) {
 
         return embed;
     } catch (e) {
-        console.error("Error fetching schedule:", e);
+        log("Error fetching schedule: " + e);
         const embed = [new EmbedBuilder().setTitle(getEnv("ERROR")).setDescription(e.message).setColor("Red")];
         return embed;
     }

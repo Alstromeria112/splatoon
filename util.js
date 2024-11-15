@@ -11,7 +11,7 @@ const { ButtonInteraction, ChatInputCommandInteraction, ChannelType, EmbedBuilde
 function getEnv(name) {
     const value = process.env[name];
     if (typeof value !== "string") {
-        console.log(`[ ERROR ] ${name} is not present in \`.env\`. exiting...`);
+        log(`[ ERROR ] ${name} is not present in \`.env\`. exiting...`);
         process.exit(1);
     }
     return value;

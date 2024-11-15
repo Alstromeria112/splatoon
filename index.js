@@ -79,4 +79,4 @@ client.on("ready", client => {
 })();
 
 const join = require("./structures/join.js");
-Promise.all([join(client)]).catch(console.error);
+Promise.all([join(client)]).catch(log);

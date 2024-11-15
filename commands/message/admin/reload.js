@@ -3,7 +3,7 @@
 "use strict";
 
 const { EmbedBuilder } = require("discord.js");
-const { getEnv } = require("../../../util.js");
+const { getEnv, log } = require("../../../util.js");
 const { reloadCommands } = require("../../../commands-manager.js");
 
 /** @type {import("../../../type.js").MessageCommand} */
@@ -34,7 +34,7 @@ module.exports = {
                 .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
                 .setTimestamp();
             const reply = await message.reply({ embeds: [embed] });
-            console.log("Reloading...");
+            log("Reloading...");
 
             await reloadCommands();
             const suc = new EmbedBuilder()

@@ -6,7 +6,7 @@ const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 const ytdl = require("@distube/ytdl-core");
 const ytpl = require("ytpl");
 const { GuildMusicQueue, ParsedMusicInfo } = require("../../../structures/GuildMusicQueue.js");
-const { getEnv } = require("../../../util.js");
+const { getEnv, log } = require("../../../util.js");
 
 /** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
@@ -100,7 +100,7 @@ module.exports = {
                     .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
                     .setTimestamp();
                 await interaction.editReply({ content: "", embeds: [embed] });
-                console.error(e);
+                log(e);
                 return;
             }
         } else {
@@ -163,7 +163,7 @@ module.exports = {
                     .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
                     .setTimestamp();
                 await interaction.editReply({ content: "", embeds: [embed] });
-                console.error(e);
+                log(e);
                 return;
             }
         }

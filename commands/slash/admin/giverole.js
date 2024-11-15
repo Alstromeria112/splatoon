@@ -11,7 +11,7 @@ const {
     ActionRowBuilder,
     GuildMember
 } = require("discord.js");
-const { getEnv } = require("../../../util.js");
+const { getEnv, log } = require("../../../util.js");
 
 /** @type {import("../../../type.js").SlashCommand} */
 module.exports = {
@@ -71,7 +71,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
-                    console.error(e);
+                    log(e);
                     return interaction.reply({
                         content:
                             "ロールの付与に失敗しました。\n申し訳ありませんが、<#1285620212053315758>までお問い合わせ願います。",

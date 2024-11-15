@@ -3,7 +3,7 @@
 "use strict";
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { getEnv } = require("../../../util.js");
+const { getEnv, log } = require("../../../util.js");
 const { reloadCommands } = require("../../../commands-manager.js");
 
 /** @type {import("../../../type.js").SlashCommand} */
@@ -24,7 +24,7 @@ module.exports = {
                 .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
                 .setTimestamp();
             await interaction.reply({ embeds: [embed] });
-            console.log("Reloading...");
+            log("Reloading...");
 
             await reloadCommands();
             const suc = new EmbedBuilder()
