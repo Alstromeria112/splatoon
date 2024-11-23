@@ -91,11 +91,11 @@ client.on("ready", client => {
     log(`[ CONSOLE ] Logged in as ${client.user.tag}`);
 });
 
+const join = require("./structures/join.js");
+join(client);
+
 ~(async function () {
     await reloadCommands();
 
     client.login(getEnv("TOKEN"));
 })();
-
-const join = require("./structures/join.js");
-join(client);
