@@ -14,6 +14,25 @@ const client = new Client({
 
 client.on("interactionCreate", async interaction => {
     if (interaction.isChatInputCommand() || interaction.isButton()) {
+        // maintenance mode
+        // if (
+        //     interaction.user.id !== getEnv("OWNER_ID") &&
+        //     !getEnv("MAINTAINERS_ID").split(",").includes(interaction.user.id)
+        // ) {
+        //     const embed = new EmbedBuilder()
+        //         .setTitle(getEnv("ERROR"))
+        //         .setDescription(
+        //             "現在メンテナンス中です。\n[詳細はこちら](https://discord.com/channels/1047808586702671902/1283571082556739645)"
+        //         )
+        //         .setColor("Red")
+        //         .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") })
+        //         .setTimestamp();
+        //     return interaction.reply({
+        //         embeds: [embed],
+        //         ephemeral: true
+        //     });
+        // }
+
         const commandName = interaction.isChatInputCommand()
             ? interaction.commandName
             : interaction.customId.slice(0, interaction.customId.indexOf("/"));
@@ -79,4 +98,4 @@ client.on("ready", client => {
 })();
 
 const join = require("./structures/join.js");
-Promise.all([join(client)]).catch(log);
+join(client);
