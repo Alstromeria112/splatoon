@@ -8,15 +8,15 @@ const path = require("node:path");
 const { Collection } = require("discord.js");
 const { log } = require("./util.js");
 
-const slashCommandsPath = path.join(__dirname, "commands/slash");
+const interactionsPath = path.join(__dirname, "commands/slash");
 const messageCommandsPath = path.join(__dirname, "commands/message");
 
 const moduleDispose = Symbol("module.dispose");
 exports.moduleDispose = moduleDispose;
 
-/** @type {Collection<string, import("./type.js").SlashCommand>} */
-const slashCommands = new Collection();
-exports.slashCommands = slashCommands;
+/** @type {Collection<string, import("./type.js").Interaction>} */
+const Interactions = new Collection();
+exports.interactions = Interactions;
 
 /** @type {Collection<string, import("./type.js").MessageCommand>} */
 const messageCommands = new Collection();
@@ -64,7 +64,7 @@ async function reloadCommands() {
         delete require.cache[name];
     }
     await Promise.all([
-        reloadAnyTypeCommands(slashCommandsPath, slashCommands),
+        reloadAnyTypeCommands(interactionsPath, Interactions),
         reloadAnyTypeCommands(messageCommandsPath, messageCommands)
     ]);
     log("Successfully");

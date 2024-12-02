@@ -4,6 +4,7 @@ import type {
     ChatInputCommandInteraction,
     Collection,
     Message,
+    ModalSubmitInteraction,
     RESTPostAPIChatInputApplicationCommandsJSONBody
 } from "discord.js";
 
@@ -12,14 +13,16 @@ export type reloadAnyTypeCommandsFunctionType = <T extends { data: { name: strin
     commandsCollection: Collection<string, T>
 ) => void;
 
-export type SlashCommand = {
+export interface Interaction {
     data: RESTPostAPIChatInputApplicationCommandsJSONBody;
-    handler: (interaction: ChatInputCommandInteraction | ButtonInteraction) => Awaitable<void>;
-};
+    handler: (interaction: ChatInputCommandInteraction) => Awaitable<void>;
+    modalHandler: (interaction: ModalSubmitInteraction) => Awaitable<void>;
+    buttonHandler: (Interaction: ButtonInteraction) => Awaitable<void>;
+}
 
-export type MessageCommand = {
+export interface MessageCommand {
     data: {
         name: string;
     };
     handler: (message: Message) => Awaitable<void>;
-};
+}
