@@ -4,7 +4,8 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fs = require("node:fs");
 const { getEnv } = require("../../../util.js");
 const { log } = require("node:console");
-const data = fs.readFileSync("/home/alstromeria/Project/splatoon/db/weapon.txt", "utf-8");
+const path = require("node:path");
+const data = fs.readFileSync(path.resolve(__dirname, "../../../db/weapon.txt"), "utf-8");
 
 /** @type {import("../../../type").Interaction} */
 module.exports = {

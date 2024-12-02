@@ -1,8 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { getEnv, log } = require("../../../util");
 const fs = require("node:fs");
+const path = require("node:path");
 
-const gearData = JSON.parse(fs.readFileSync("/home/alstromeria/Project/splatoon/db/geardata.json"));
+const gearData = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../db/GearData.json")));
 
 /** @type {import("../../../type").SlashCommand} */
 module.exports = {
