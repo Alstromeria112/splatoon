@@ -13,7 +13,7 @@ const {
 } = require("discord.js");
 const { getEnv, log } = require("../../../util.js");
 
-/** @type {import("../../../type.js").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("giverole")
@@ -50,34 +50,35 @@ module.exports = {
                 //     ephemeral: true
                 // });
             }
-        } else if (interaction.isButton()) {
-            if (interaction.customId === "giverole/member") {
-                const member = interaction.member;
-                try {
-                    if (interaction.guild) {
-                        const o = interaction.guild.members.cache.get(interaction.user.id);
-                        if (o?.roles.cache.has(getEnv("MEMBER_ROLE_ID"))) {
-                            return interaction.reply({
-                                content: `既に<@&${getEnv("MEMBER_ROLE_ID")}>を持っています。`,
-                                ephemeral: true
-                            });
-                        }
-                    }
-                    if (member instanceof GuildMember) {
-                        await member.roles.add(getEnv("MEMBER_ROLE_ID"));
+        }
+    },
+    buttonHandler: async interaction => {
+        if (interaction.customId === "giverole/member") {
+            const member = interaction.member;
+            try {
+                if (interaction.guild) {
+                    const o = interaction.guild.members.cache.get(interaction.user.id);
+                    if (o?.roles.cache.has(getEnv("MEMBER_ROLE_ID"))) {
                         return interaction.reply({
-                            content: `<@&${getEnv("MEMBER_ROLE_ID")}>を付与しました。`,
+                            content: `既に<@&${getEnv("MEMBER_ROLE_ID")}>を持っています。`,
                             ephemeral: true
                         });
                     }
-                } catch (e) {
-                    log(e);
+                }
+                if (member instanceof GuildMember) {
+                    await member.roles.add(getEnv("MEMBER_ROLE_ID"));
                     return interaction.reply({
-                        content:
-                            "ロールの付与に失敗しました。\n申し訳ありませんが、<#1285620212053315758>までお問い合わせ願います。",
+                        content: `<@&${getEnv("MEMBER_ROLE_ID")}>を付与しました。`,
                         ephemeral: true
                     });
                 }
+            } catch (e) {
+                log(e);
+                return interaction.reply({
+                    content:
+                        "ロールの付与に失敗しました。\n申し訳ありませんが、<#1285620212053315758>までお問い合わせ願います。",
+                    ephemeral: true
+                });
             }
         }
     }

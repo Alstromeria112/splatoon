@@ -12,7 +12,7 @@ const {
 } = require("discord.js");
 const { getEnv, log } = require("../../../util.js");
 
-/** @type {import("../../../type.js").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("cert")
@@ -42,25 +42,26 @@ module.exports = {
                 // @ts-ignore
                 return interaction.channel.send({ components: [row] });
             }
-        } else if (interaction.isButton()) {
-            if (interaction.customId === "cert/check") {
-                const member = interaction.member;
-                try {
-                    if (member instanceof GuildMember) {
-                        await member.roles.add(getEnv("MEMBER_ROLE_ID"));
-                        return interaction.reply({
-                            content: "メンバーロールを付与しました。",
-                            ephemeral: true
-                        });
-                    }
-                } catch (e) {
-                    log(e);
+        }
+    },
+    buttonHandler: async interaction => {
+        if (interaction.customId === "cert/check") {
+            const member = interaction.member;
+            try {
+                if (member instanceof GuildMember) {
+                    await member.roles.add(getEnv("MEMBER_ROLE_ID"));
                     return interaction.reply({
-                        content:
-                            "ロールの付与に失敗しました。\n申し訳ありませんが、<#1285620212053315758>にてスレッドを作成してください。",
+                        content: "メンバーロールを付与しました。",
                         ephemeral: true
                     });
                 }
+            } catch (e) {
+                log(e);
+                return interaction.reply({
+                    content:
+                        "ロールの付与に失敗しました。\n申し訳ありませんが、<#1285620212053315758>にてスレッドを作成してください。",
+                    ephemeral: true
+                });
             }
         }
     }

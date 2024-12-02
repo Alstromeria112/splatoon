@@ -3,7 +3,7 @@
 const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 const { getEnv } = require("../../util.js");
 
-/** @type {import("../../type").SlashCommand} */
+/** @type {import("../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder().setName("ping").setDescription("Pong!").toJSON(),
     handler: async interaction => {

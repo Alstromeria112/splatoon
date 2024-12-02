@@ -17,11 +17,12 @@ module.exports = {
         )
         .toJSON(),
     handler: async interaction => {
-        if (!interaction.inCachedGuild() || !interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
         if (interaction.options.getSubcommand(true) === "yourself") {
             return interaction.reply(getRandom());
         } else if (interaction.options.getSubcommand(true) === "alluser") {
             const member = interaction.member;
+
             if (!member.voice.channel) {
                 return interaction.reply("You are not connected in vc.");
             }

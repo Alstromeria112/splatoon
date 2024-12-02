@@ -30,7 +30,7 @@ const nn = {
     next: "次"
 };
 
-/** @type {import("../../../type").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("schedule")

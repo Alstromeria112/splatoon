@@ -6,7 +6,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { getEnv, log } = require("../../../util.js");
 const { reloadCommands } = require("../../../commands-manager.js");
 
-/** @type {import("../../../type.js").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder().setName("reload").setDescription("Reload bot.").toJSON(),
     handler: async interaction => {

@@ -8,7 +8,7 @@ const ytpl = require("ytpl");
 const { GuildMusicQueue, ParsedMusicInfo } = require("../../../structures/GuildMusicQueue.js");
 const { getEnv, log } = require("../../../util.js");
 
-/** @type {import("../../../type.js").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("play")
@@ -19,7 +19,7 @@ module.exports = {
         .setDMPermission(false)
         .toJSON(),
     handler: async interaction => {
-        if (!interaction.inCachedGuild() || !interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
 
         await interaction.deferReply();
         const query = interaction.options.getString("query", true);

@@ -6,7 +6,7 @@ const { getEnv } = require("../../../util.js");
 const { log } = require("node:console");
 const data = fs.readFileSync("/home/alstromeria/Project/splatoon/db/weapon.txt", "utf-8");
 
-/** @type {import("../../../type").SlashCommand} */
+/** @type {import("../../../type").Interaction} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("weapon")
@@ -19,7 +19,7 @@ module.exports = {
         )
         .toJSON(),
     handler: async interaction => {
-        if (!interaction.inCachedGuild() || !interaction.isChatInputCommand()) return;
+        if (!interaction.inCachedGuild()) return;
         if (interaction.options.getSubcommand() === "yourself") {
             return interaction.reply(getRandom());
         } else if (interaction.options.getSubcommand() === "alluser") {
