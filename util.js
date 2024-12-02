@@ -2,7 +2,13 @@
 
 "use strict";
 
-const { ButtonInteraction, ChatInputCommandInteraction, ChannelType, EmbedBuilder } = require("discord.js");
+const {
+    ButtonInteraction,
+    ChatInputCommandInteraction,
+    ChannelType,
+    EmbedBuilder,
+    ModalSubmitInteraction
+} = require("discord.js");
 
 /**
  * @param {string} name
@@ -39,7 +45,7 @@ function getDateString(date = new Date()) {
 exports.getDateString = getDateString;
 
 /**
- * @param { ButtonInteraction | ChatInputCommandInteraction } interaction
+ * @param { ButtonInteraction | ChatInputCommandInteraction | ModalSubmitInteraction } interaction
  * @param { boolean } type
  * @param { any } error
  */
@@ -52,7 +58,10 @@ async function sendEmbed(interaction, type, error) {
     } else if (interaction.isButton()) {
         commandType = interaction.customId;
         interactionType = "Button";
-    } else return;
+    } else if (interaction.isModalSubmit()) {
+        commandType = interaction.customId;
+        interactionType = "Modal";
+    }
 
     const guild = await interaction.client.guilds.fetch(getEnv("GUILD_ID"));
     const channel = await guild?.channels.fetch(getEnv("CHANNEL_ID"));

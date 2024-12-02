@@ -4,7 +4,7 @@
 Error.stackTraceLimit = Infinity;
 
 const { Client, EmbedBuilder, GatewayIntentBits: IntentBits, ChannelType } = require("discord.js");
-const { slashCommands, messageCommands, reloadCommands } = require("./commands-manager.js");
+const { interactions, messageCommands, reloadCommands } = require("./commands-manager.js");
 const { getEnv, sendEmbed, log } = require("./util.js");
 require("dotenv/config.js");
 
@@ -13,7 +13,7 @@ const client = new Client({
 });
 
 client.on("interactionCreate", async interaction => {
-    if (interaction.isChatInputCommand() || interaction.isButton()) {
+    if (interaction.isChatInputCommand() || interaction.isButton() || interaction.isModalSubmit()) {
         // maintenance mode
         // if (
         //     interaction.user.id !== getEnv("OWNER_ID") &&
@@ -36,7 +36,7 @@ client.on("interactionCreate", async interaction => {
         const commandName = interaction.isChatInputCommand()
             ? interaction.commandName
             : interaction.customId.slice(0, interaction.customId.indexOf("/"));
-        const command = slashCommands.get(commandName);
+        const command = interactions.get(commandName);
         if (!command) {
             const errEmbed = new EmbedBuilder()
                 .setTitle(getEnv("ERROR"))
@@ -48,7 +48,13 @@ client.on("interactionCreate", async interaction => {
             return;
         }
         try {
-            await command.handler(interaction);
+            if (interaction.isChatInputCommand()) {
+                await command.handler(interaction);
+            } else if (interaction.isButton()) {
+                await command.buttonHandler(interaction);
+            } else if (interaction.isModalSubmit()) {
+                await command.modalHandler(interaction);
+            }
             return sendEmbed(interaction, true, null);
         } catch (e) {
             const embed = new EmbedBuilder()
@@ -86,7 +92,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 });
 
 client.on("ready", client => {
-    log(`[ CONSOLE ] <Slash> ${slashCommands.map(command => command.data.name).join(", ")} is loaded`);
+    log(`[ CONSOLE ] <Slash> ${interactions.map(command => command.data.name).join(", ")} is loaded`);
     log(`[ CONSOLE ] <Text> ${messageCommands.map(command => command.data.name).join(", ")} is loaded`);
     log(`[ CONSOLE ] Logged in as ${client.user.tag}`);
 });
