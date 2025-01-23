@@ -32,12 +32,24 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand.setName("register").setDescription("フレンドコードを登録/再登録します。")
         )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName("config")
+                .setDescription("現在のフレンドコードの扱いについて設定します。")
+                .addBooleanOption(option =>
+                    option
+                        .setName("isvisible")
+                        .setDescription(
+                            "他のユーザーがあなたのフレンドコードを検索することを許可しますか？ true(はい)/false(いいえ)"
+                        )
+                )
+        )
         .toJSON(),
     handler: async interaction => {
         if (interaction.options.getSubcommand(true) === "show") {
             const targetUser = interaction.user;
             const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-            const fc = `${data[targetUser.id]}`;
+            const fc = `${data[targetUser.id].fc}`;
 
             if (!fc) {
                 const embed = new EmbedBuilder()
@@ -53,12 +65,35 @@ module.exports = {
             const result = `SW-${fc.replace(/(\d{4})(?=\d)/g, "$1-")}`;
             const embed = new EmbedBuilder()
                 .setAuthor({ name: targetUser.displayName, iconURL: targetUser.displayAvatarURL() })
+                .setDescription(result + "\nこのメッセージはプライバシー観点のため数分後に削除されます")
+                .setColor("#00ffff")
+                .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") });
+            await interaction.reply({ embeds: [embed] });
+            setTimeout(() => {
+                interaction.deleteReply();
+            }, 120000);
+        } else if (interaction.options.getSubcommand(true) === "search") {
+            const targetUser = interaction.options.getUser("user", true);
+            const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+            const fc = `${data[targetUser.id].fc}`;
+            if (!fc || data[targetUser.id]["isVisible"] === false) {
+                const embed = new EmbedBuilder()
+                    .setTitle(getEnv("ERROR"))
+                    .setDescription(
+                        "フレンドコードが見つかりません。\n該当ユーザーがフレンドコードを登録していない、または非表示にしている可能性があります。"
+                    )
+                    .setColor("#ff0000")
+                    .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") });
+                return interaction.reply({ embeds: [embed] });
+            }
+
+            const result = `SW-${fc.replace(/(\d{4})(?=\d)/g, "$1-")}`;
+            const embed = new EmbedBuilder()
+                .setAuthor({ name: targetUser.displayName, iconURL: targetUser.displayAvatarURL() })
                 .setDescription(result)
                 .setColor("#00ffff")
                 .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") });
             return interaction.reply({ embeds: [embed] });
-        } else if (interaction.options.getSubcommand(true) === "search") {
-            return interaction.reply("coming soon...");
         } else if (interaction.options.getSubcommand(true) === "register") {
             const fc = new TextInputBuilder()
                 .setCustomId("fc")
@@ -74,6 +109,22 @@ module.exports = {
                 // @ts-ignore
                 .addComponents(new ActionRowBuilder().addComponents(fc));
             await interaction.showModal(modal);
+        } else if (interaction.options.getSubcommand(true) === "config") {
+            const targetUser = interaction.user;
+            const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+            if (interaction.options.getBoolean("isvisible", true) === true) {
+                data[targetUser.id]["isVisible"] = true;
+                fs.writeFileSync(filePath, JSON.stringify(data, null, 4), "utf-8");
+            } else if (interaction.options.getBoolean("isvisible", true) === false) {
+                data[targetUser.id]["isVisible"] = false;
+                fs.writeFileSync(filePath, JSON.stringify(data, null, 4), "utf-8");
+            }
+            const embed = new EmbedBuilder()
+                .setAuthor({ name: "Successfully data changed." })
+                .setDescription(`isVisible:\ntrue?false`)
+                .setColor("#00ffff")
+                .setFooter({ text: getEnv("POWERED"), iconURL: getEnv("ICON_URL") });
+            return interaction.reply({ embeds: [embed] });
         }
     },
     modalHandler: async interaction => {
@@ -92,7 +143,12 @@ module.exports = {
 
             const result = `SW-${fc.replace(/(\d{4})(?=\d)/g, "$1-")}`;
             const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-            data[targetUser.id] = fc;
+
+            data[targetUser.id] = {
+                fc: fc,
+                isVisible: false
+            };
+
             fs.writeFileSync(filePath, JSON.stringify(data, null, 4), "utf-8");
 
             const embed = new EmbedBuilder()
