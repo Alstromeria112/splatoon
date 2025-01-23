@@ -8,10 +8,9 @@ import type {
     RESTPostAPIChatInputApplicationCommandsJSONBody
 } from "discord.js";
 
-export type reloadAnyTypeCommandsFunctionType = <T extends { data: { name: string } }>(
-    commandDirPath: string,
-    commandsCollection: Collection<string, T>
-) => void;
+export interface reloadAnyTypeCommandsFunctionType<T extends { data: { name: string } }> {
+    (commandDirPath: string, ommandsCollection: Collection<string, T>): void;
+}
 
 export interface Interaction {
     data: RESTPostAPIChatInputApplicationCommandsJSONBody;
